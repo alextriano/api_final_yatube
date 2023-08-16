@@ -3,7 +3,7 @@ from rest_framework import filters, generics, permissions, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 
-from posts.models import Comment, Group, Post, Follow
+from posts.models import Group, Post, Follow
 from .serializers import (
     CommentSerializer, GroupSerializer, PostSerializer, FollowSerializer
 )
@@ -17,7 +17,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 class PostViewSet(viewsets.ModelViewSet):
     """Получение списка/создание/обновление/удаление постов."""
-    queryset = Post.objects.all()
+    queryset = Post.objects.select_related('author')
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
 
@@ -38,7 +38,6 @@ class PostViewSet(viewsets.ModelViewSet):
 class CommentViewSet(PostViewSet):
     """Получение списка/создание/обновление/удаление комментариев."""
     serializer_class = CommentSerializer
-    pagination_class = None
 
     def get_post(self):
         post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
@@ -46,7 +45,7 @@ class CommentViewSet(PostViewSet):
 
     def get_queryset(self):
         post = self.get_post()
-        return Comment.objects.filter(post=post)
+        return post.comments
 
     def perform_create(self, serializer):
         post = self.get_post()

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 User = get_user_model()
-text_limit = 15
+TEXT_LIMIT = 15
 
 
 class Group(models.Model):
@@ -47,7 +47,7 @@ class Post(models.Model):
         ordering = ('pub_date',)
 
     def __str__(self):
-        return (self.author + "|" + self.text[:text_limit])
+        return (self.author + "|" + self.text[:TEXT_LIMIT])
 
 
 class Comment(models.Model):
@@ -74,7 +74,7 @@ class Comment(models.Model):
         ordering = ('-created',)
 
     def __str__(self):
-        return self.text[:text_limit]
+        return self.text[:TEXT_LIMIT]
 
 
 class Follow(models.Model):
